@@ -1,0 +1,19 @@
+version: '3'
+services:
+  jenkins:
+    image: "jenkins/jenkins:lts"
+    ports:
+     - "8080:8080"
+     - "50000:50000"
+    volumes:
+     - jenkins_home:/var/jenkins_home
+    container_name: "jenkins" 
+
+  couchdb:
+    image: "couchdb:latest"
+    container_name: "backend_couchdb"
+    ports:
+     - "5984:5984"  
+
+volumes:
+  jenkins_home:
