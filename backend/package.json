@@ -1,13 +1,9 @@
 {
   "name": "pit",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
     "compile": "tsc"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "express": "^4.16.4",
     "nano": "^8.1.0",
