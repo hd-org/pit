@@ -1,25 +1,43 @@
 import { Trigger } from "../../trigger/trigger";
 import { Input } from "../../input/input";
-import { Device } from "../device";
+import { iDevice } from "../i_device";
+import { DeviceType } from "../device_types";
+import { EventEmitter } from "events";
 
-export class Switch extends Device{
+export class Switch implements iDevice {
+    
+    _id: string;
+    _rev: string | undefined;
+    name: string;
+    type: string;
 
     private _action: Trigger;
-    private _input: Input;
-    private _name: string;
-
-    constructor(action: Trigger, input: Input, name: string) {
-        super();
+   
+    constructor(action: Trigger, name: string, rev: string | undefined, eventEmitter: EventEmitter) {
         this._action = action;
-        this._input = input;
-        this._name = name;
+        this.name = name;
+        this.type = DeviceType.SWITCH;
+        this._id = name;
+        this._rev = rev;
 
-
-        this._input.on(this._name, async() => {
-            console.log('Switch ' + this._name + ' triggered');
+        eventEmitter.on(this.name, async() => {
+            console.log('Switch ' + this.name + ' triggered');
             await this._action.execute();
             console.log('Action executed');
         });
+    }
+
+    toJSON() {
+        return {
+            _id: this._id,
+            _rev: this._rev,
+            name: this.name,
+            type: this.type
+        }
+    }
+
+    processAPIResponse(response: import("nano").DocumentInsertResponse): void {
+        
     }
 
 }

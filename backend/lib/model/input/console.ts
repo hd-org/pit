@@ -1,18 +1,25 @@
 import { createInterface, Interface } from "readline";
 import { Input } from "./input";
 import Nano = require('nano');
+import { InputTypes } from "./input_types";
+import { EventEmitter } from "events";
 
 export class ConsoleInput extends Input {
-
+    
+    eventEmitter: EventEmitter;
     private _lineReader: Interface;
-    _id: string|undefined;
-    _rev: string|undefined;
-    type: string = 'console_input';
+    _id: string;
+    _rev: string | undefined;
 
-    constructor(id: string, rev: string) {
+    type: InputTypes = InputTypes.CONSOLE;
+    name: string;
+
+    constructor(name: string, rev: string | undefined, eventEmitter: EventEmitter) {
         super();
-        this._id = id;
+        this._id = name;
         this._rev = rev;
+        this.name = name;
+        this.eventEmitter = eventEmitter;
 
         this._lineReader = createInterface({
             input: process.stdin,
@@ -26,7 +33,7 @@ export class ConsoleInput extends Input {
             if(answer === 'stop') {
                 return this.stop();
             }
-            this.emit(answer);
+            this.eventEmitter.emit(answer);
 
             this.run();
         });
@@ -39,17 +46,17 @@ export class ConsoleInput extends Input {
 
     public processAPIResponse(response: Nano.DocumentInsertResponse) {
         if (response.ok === true) {
-          this._id = response.id
-          this._rev = response.rev
+            this._rev = response.rev
         }
     }
 
 
     public toJSON() {
         return {
-            id: this._id,
+            _id: this._id,
             _rev: this._rev,
-            type: this.type
+            type: this.type,
+            name: this.name
         };
     }
 }
